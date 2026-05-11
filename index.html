@@ -1,0 +1,471 @@
+<!doctype html>
+<html>
+    <head> 
+        <meta charset="UTF-8"> 
+        <meta name="viewport" id="viewport" content="width=device-width, initial-scale=1"> 
+        <link rel="shortcut icon" href="favicon.png" type="image/x-icon">
+        <title>𝒗𝒊𝒓𝒕𝒖𝒂𝒍 𝒘𝒂𝒍𝒍𝒆𝒕</title>
+    </head> 
+    <body> 
+        <h1>𝒗𝒊𝒓𝒕𝒖𝒂𝒍 𝒘𝒂𝒍𝒍𝒆𝒕</h1>
+        <div>
+            Hello World! 
+        </div>  
+    </body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeonWallet | Premium Virtual Assets</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+        :root {
+            --neon-blue: #00f2ff;
+            --neon-purple: #bc13fe;
+            --dark-bg: #050505;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark-bg);
+            color: white;
+            overflow-x: hidden;
+            margin: 0;
+        }
+
+        /* Animated Gradient Background */
+        .bg-animate {
+            background: linear-gradient(-45deg, #050505, #1a1033, #051c2c, #0d0d0d);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+        }
+
+        .neon-border {
+            border: 1px solid var(--neon-blue);
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
+        }
+
+        .neon-text {
+            text-shadow: 0 0 10px rgba(0, 242, 255, 0.5);
+        }
+
+        /* Loading Screen */
+        #loader {
+            position: fixed;
+            inset: 0;
+            background: var(--dark-bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(0, 242, 255, 0.1);
+            border-top: 3px solid var(--neon-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(188, 19, 254, 0.4);
+        }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="bg-animate"></div>
+
+    <div id="loader">
+        <div class="flex flex-col items-center">
+            <div class="spinner mb-4"></div>
+            <h2 class="text-neon-blue font-bold tracking-widest uppercase">Securing Wallet</h2>
+        </div>
+    </div>
+
+    <div id="toast-container" class="fixed top-5 right-5 z-[10000] flex flex-col gap-2"></div>
+
+    <!-- Auth Screens -->
+    <div id="auth-screen" class="min-h-screen flex items-center justify-center p-4">
+        <div class="glass w-full max-w-md p-8">
+            <div class="text-center mb-8">
+                <div class="inline-block p-3 rounded-full glass neon-border mb-4">
+                    <i data-lucide="shield-check" class="text-neon-blue w-8 h-8"></i>
+                </div>
+                <h1 class="text-3xl font-bold neon-text">Virtual Wallet</h1>
+                <p class="text-gray-400 mt-2">Elite Asset Management</p>
+            </div>
+
+            <div id="login-form">
+                <div class="space-y-4">
+                    <input type="text" id="login-username" placeholder="Username" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-neon-blue">
+                    <input type="password" id="login-password" placeholder="Password" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-neon-blue">
+                    <button onclick="auth.login()" class="w-full btn-primary py-4 rounded-xl font-bold uppercase tracking-wider">Access Dashboard</button>
+                    <p class="text-center text-sm text-gray-400">New user? <a href="javascript:void(0)" onclick="toggleAuth()" class="text-neon-blue">Create Account</a></p>
+                </div>
+            </div>
+
+            <div id="signup-form" class="hidden">
+                <div class="space-y-4">
+                    <input type="text" id="signup-username" placeholder="Username" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-neon-blue">
+                    <input type="password" id="signup-password" placeholder="Password" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-neon-blue">
+                    <input type="text" id="signup-ref" placeholder="Referral Code (Optional)" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-neon-blue">
+                    <button onclick="auth.signup()" class="w-full btn-primary py-4 rounded-xl font-bold uppercase tracking-wider">Join Now</button>
+                    <p class="text-center text-sm text-gray-400">Already a member? <a href="javascript:void(0)" onclick="toggleAuth()" class="text-neon-blue">Login</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main UI -->
+    <div id="app-screen" class="hidden min-h-screen flex flex-col md:flex-row max-w-7xl mx-auto p-4 md:p-8 gap-6">
+        <nav class="fixed bottom-0 left-0 w-full md:relative md:w-64 glass p-4 md:h-[80vh] flex md:flex-col justify-around md:justify-start gap-4 z-50">
+            <div class="hidden md:flex items-center gap-3 mb-8 px-2">
+                <div class="w-8 h-8 rounded-lg bg-neon-blue flex items-center justify-center">
+                    <i data-lucide="zap" class="text-black w-5 h-5"></i>
+                </div>
+                <span class="font-bold text-lg">NeonPay</span>
+            </div>
+            
+            <button onclick="navigate('dashboard')" class="nav-btn flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition text-neon-blue">
+                <i data-lucide="layout-grid"></i> <span class="hidden md:inline">Dashboard</span>
+            </button>
+            <button onclick="navigate('history')" class="nav-btn flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition">
+                <i data-lucide="activity"></i> <span class="hidden md:inline">Ledger</span>
+            </button>
+            <button onclick="navigate('profile')" class="nav-btn flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition">
+                <i data-lucide="user"></i> <span class="hidden md:inline">Account</span>
+            </button>
+            <button id="admin-nav" onclick="navigate('admin')" class="hidden flex items-center gap-3 p-3 rounded-xl text-yellow-400 hover:bg-white/5 transition">
+                <i data-lucide="shield"></i> <span class="hidden md:inline">Admin Panel</span>
+            </button>
+            <div class="md:mt-auto">
+                <button onclick="auth.logout()" class="flex items-center gap-3 p-3 rounded-xl text-red-400 hover:bg-red-400/10 transition w-full text-left">
+                    <i data-lucide="log-out"></i> <span class="hidden md:inline">Logout</span>
+                </button>
+            </div>
+        </nav>
+
+        <main class="flex-1 mb-20 md:mb-0 space-y-6">
+            <section id="dashboard" class="tab-content active space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="glass p-8 relative overflow-hidden">
+                        <h3 class="text-gray-400 text-sm uppercase tracking-widest">Available Balance</h3>
+                        <div class="flex items-baseline gap-2 mt-2">
+                            <span class="text-4xl font-bold">₹</span>
+                            <span id="balance-display" class="text-5xl font-extrabold neon-text">0.00</span>
+                        </div>
+                        <div class="mt-8 flex gap-3">
+                            <button onclick="openModal('withdraw-modal')" class="flex-1 btn-primary py-3 rounded-xl font-bold flex items-center justify-center gap-2">
+                                <i data-lucide="send" class="w-4 h-4"></i> Withdraw
+                            </button>
+                            <button onclick="claimDailyBonus()" class="flex-1 glass py-3 rounded-xl font-bold hover:bg-white/10 flex items-center justify-center gap-2">
+                                <i data-lucide="gift" class="w-4 h-4"></i> Bonus
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="glass p-6">
+                            <i data-lucide="users" class="text-neon-blue mb-2"></i>
+                            <h4 class="text-gray-400 text-xs">Team Size</h4>
+                            <p id="ref-count" class="text-2xl font-bold">0</p>
+                        </div>
+                        <div class="glass p-6">
+                            <i data-lucide="trending-up" class="text-neon-purple mb-2"></i>
+                            <h4 class="text-gray-400 text-xs">Net Income</h4>
+                            <p id="total-earned" class="text-2xl font-bold">₹0</p>
+                        </div>
+                        <div class="glass p-6 col-span-2">
+                            <h4 class="text-gray-400 text-xs mb-2">Referral Code</h4>
+                            <div class="flex justify-between items-center bg-black/40 p-3 rounded-lg border border-white/5">
+                                <code id="my-ref-code" class="text-neon-blue font-mono font-bold uppercase">CODE</code>
+                                <button onclick="copyRef()" class="text-gray-400 hover:text-white"><i data-lucide="copy" class="w-4 h-4"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass p-6">
+                    <h3 class="font-bold mb-4">Earnings Chart</h3>
+                    <canvas id="balanceChart" height="150"></canvas>
+                </div>
+            </section>
+
+            <section id="history" class="tab-content space-y-4">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-bold">Transaction History</h2>
+                    <input type="text" id="tx-search" placeholder="Search..." class="bg-white/5 border border-white/10 rounded-lg px-4 py-2 w-48">
+                </div>
+                <div id="tx-list" class="space-y-3"></div>
+            </section>
+
+            <section id="profile" class="tab-content">
+                <div class="glass p-8 max-w-xl mx-auto text-center">
+                    <div class="w-24 h-24 rounded-full bg-gradient-to-tr from-neon-blue to-neon-purple p-1 mx-auto mb-4">
+                        <div class="w-full h-full rounded-full bg-black flex items-center justify-center">
+                            <i data-lucide="user-check" class="w-10 h-10 text-neon-blue"></i>
+                        </div>
+                    </div>
+                    <h2 id="profile-name" class="text-2xl font-bold">User</h2>
+                    <p id="join-date" class="text-gray-500 text-sm mt-1">Member since --</p>
+                    <div class="mt-8 space-y-4">
+                        <div class="flex justify-between p-4 bg-white/5 rounded-xl border border-white/10">
+                            <span>KYC Status</span>
+                            <span class="text-green-500">Verified</span>
+                        </div>
+                        <button onclick="showToast('Security settings locked', 'info')" class="w-full py-3 glass border-white/10 rounded-xl">Security Center</button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="admin" class="tab-content">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="glass p-6">
+                        <h3 class="text-xl font-bold mb-4">Send Rewards</h3>
+                        <div class="space-y-4">
+                            <input type="text" id="admin-target" placeholder="User Name" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3">
+                            <input type="number" id="admin-amount" placeholder="Amount (₹)" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3">
+                            <button onclick="admin.sendFunds()" class="w-full bg-yellow-500 text-black py-3 rounded-xl font-bold">Transfer Now</button>
+                        </div>
+                    </div>
+                    <div class="glass p-6">
+                        <h3 class="text-xl font-bold mb-4">Master Stats</h3>
+                        <div id="admin-stats" class="space-y-2 text-gray-400"></div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="withdraw-modal" class="fixed inset-0 bg-black/90 backdrop-blur z-[200] hidden items-center justify-center p-4">
+        <div class="glass w-full max-w-md p-8">
+            <h3 class="text-2xl font-bold mb-4">Withdraw Funds</h3>
+            <p class="text-gray-400 mb-6">Minimum: ₹10.00</p>
+            <div class="space-y-4">
+                <input type="number" id="withdraw-amount" placeholder="₹ 0.00" class="w-full bg-white/10 border border-white/10 rounded-xl px-4 py-3 text-xl font-bold">
+                <div class="flex gap-3">
+                    <button onclick="closeModal('withdraw-modal')" class="flex-1 py-3 bg-white/5 rounded-xl">Close</button>
+                    <button onclick="handleWithdraw()" class="flex-1 btn-primary py-3 rounded-xl font-bold">Withdraw</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const state = {
+            currentUser: null,
+            users: JSON.parse(localStorage.getItem('wallet_users')) || {
+                'admin': { username: 'admin', password: 'password', balance: 10000, tx: [], refs: 0, isAdmin: true, joinDate: '01/01/2026' }
+            },
+            minWithdraw: 10,
+            dailyBonus: 1.50, // Updated to 1.50
+            chart: null
+        };
+
+        const updateIcons = () => lucide.createIcons();
+
+        function showToast(msg, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const colors = { success: 'border-green-500 bg-green-500/10', error: 'border-red-500 bg-red-500/10', info: 'border-neon-blue bg-neon-blue/10' };
+            toast.className = `glass border-l-4 ${colors[type]} p-4 min-w-[250px] transition-all duration-300 flex justify-between items-center`;
+            toast.innerHTML = `<span>${msg}</span><button onclick="this.parentElement.remove()">✕</button>`;
+            container.appendChild(toast);
+            setTimeout(() => { toast.classList.add('opacity-0'); setTimeout(() => toast.remove(), 500); }, 3000);
+        }
+
+        const auth = {
+            login: () => {
+                const u = document.getElementById('login-username').value.toLowerCase();
+                const p = document.getElementById('login-password').value;
+                if (state.users[u] && state.users[u].password === p) {
+                    state.currentUser = state.users[u];
+                    initApp();
+                } else showToast('Wrong ID/Password', 'error');
+            },
+            signup: () => {
+                const u = document.getElementById('signup-username').value.toLowerCase();
+                const p = document.getElementById('signup-password').value;
+                const ref = document.getElementById('signup-ref').value.toLowerCase();
+                if (u.length < 3) return showToast('User too short', 'error');
+                if (state.users[u]) return showToast('Taken!', 'error');
+
+                state.users[u] = { username: u, password: p, balance: 0, tx: [], refs: 0, isAdmin: false, joinDate: new Date().toLocaleDateString(), lastDaily: null };
+                if (ref && state.users[ref]) {
+                    state.users[ref].balance += 10;
+                    state.users[ref].refs += 1;
+                    state.users[ref].tx.unshift({ type: 'Credit', amount: 10, desc: `Referral (${u})`, date: new Date().toLocaleString() });
+                }
+                saveData();
+                showToast('Welcome to NeonWallet!');
+                toggleAuth();
+            },
+            logout: () => location.reload()
+        };
+
+        function claimDailyBonus() {
+            const today = new Date().toDateString();
+            if (state.currentUser.lastDaily === today) return showToast('Come back tomorrow!', 'info');
+            
+            state.currentUser.balance += state.dailyBonus;
+            state.currentUser.lastDaily = today;
+            addTransaction('Credit', state.dailyBonus, 'Daily Bonus Claimed');
+            updateUI();
+            showToast(`₹${state.dailyBonus.toFixed(2)} added!`);
+        }
+
+        function handleWithdraw() {
+            const amt = parseFloat(document.getElementById('withdraw-amount').value);
+            if (amt < state.minWithdraw) return showToast('Minimum ₹10 required', 'error');
+            if (amt > state.currentUser.balance) return showToast('Insufficient funds', 'error');
+
+            state.currentUser.balance -= amt;
+            addTransaction('Debit', amt, 'Withdrawal Requested');
+            updateUI();
+            closeModal('withdraw-modal');
+            showToast('Request sent to admin');
+        }
+
+        const admin = {
+            sendFunds: () => {
+                const target = document.getElementById('admin-target').value.toLowerCase();
+                const amt = parseFloat(document.getElementById('admin-amount').value);
+                if (!state.users[target]) return showToast('User not found', 'error');
+                state.users[target].balance += amt;
+                state.users[target].tx.unshift({ type: 'Credit', amount: amt, desc: 'Admin Reward', date: new Date().toLocaleString() });
+                saveData();
+                showToast(`Sent ₹${amt} to ${target}`);
+                admin.updateStats();
+            },
+            updateStats: () => {
+                const count = Object.keys(state.users).length;
+                const total = Object.values(state.users).reduce((a, b) => a + b.balance, 0);
+                document.getElementById('admin-stats').innerHTML = `<p>Total Users: ${count}</p><p>Network Value: ₹${total.toFixed(2)}</p>`;
+            }
+        };
+
+        function addTransaction(type, amount, desc) {
+            state.currentUser.tx.unshift({ type, amount, desc, date: new Date().toLocaleString() });
+            saveData();
+        }
+
+        function renderTransactions(filter = '') {
+            const list = document.getElementById('tx-list');
+            list.innerHTML = '';
+            state.currentUser.tx.filter(t => t.desc.toLowerCase().includes(filter.toLowerCase())).forEach(t => {
+                const div = document.createElement('div');
+                div.className = 'glass p-4 flex justify-between items-center';
+                div.innerHTML = `<div class="flex items-center gap-3"><div class="p-2 rounded-lg ${t.type === 'Credit' ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}"><i data-lucide="${t.type === 'Credit' ? 'plus' : 'minus'}"></i></div><div><p class="font-bold">${t.desc}</p><p class="text-xs text-gray-500">${t.date}</p></div></div><span class="font-bold ${t.type === 'Credit' ? 'text-green-500' : 'text-red-500'}">${t.type === 'Credit' ? '+' : '-'} ₹${t.amount.toFixed(2)}</span>`;
+                list.appendChild(div);
+            });
+            updateIcons();
+        }
+
+        function updateUI() {
+            document.getElementById('balance-display').innerText = state.currentUser.balance.toFixed(2);
+            document.getElementById('ref-count').innerText = state.currentUser.refs;
+            document.getElementById('my-ref-code').innerText = state.currentUser.username.toUpperCase();
+            const earned = state.currentUser.tx.filter(t => t.type === 'Credit').reduce((a,b) => a+b.amount, 0);
+            document.getElementById('total-earned').innerText = `₹${earned.toFixed(2)}`;
+            if (state.currentUser.isAdmin) {
+                document.getElementById('admin-nav').classList.remove('hidden');
+                admin.updateStats();
+            }
+            updateChart();
+        }
+
+        function updateChart() {
+            const ctx = document.getElementById('balanceChart').getContext('2d');
+            const data = state.currentUser.tx.slice(0, 5).reverse();
+            if (state.chart) state.chart.destroy();
+            state.chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.map(t => t.date.split(',')[0]),
+                    datasets: [{
+                        data: data.map(t => t.type === 'Credit' ? t.amount : -t.amount),
+                        borderColor: '#00f2ff', tension: 0.4, fill: true, backgroundColor: 'rgba(0, 242, 255, 0.1)'
+                    }]
+                },
+                options: { plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false } } } }
+            });
+        }
+
+        function initApp() {
+            document.getElementById('auth-screen').classList.add('hidden');
+            document.getElementById('app-screen').classList.remove('hidden');
+            document.getElementById('profile-name').innerText = state.currentUser.username.toUpperCase();
+            document.getElementById('join-date').innerText = `Member since ${state.currentUser.joinDate}`;
+            updateUI();
+            updateIcons();
+        }
+
+        function saveData() { localStorage.setItem('wallet_users', JSON.stringify(state.users)); }
+        function toggleAuth() { document.getElementById('login-form').classList.toggle('hidden'); document.getElementById('signup-form').classList.toggle('hidden'); }
+        function navigate(id) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            if (id === 'history') renderTransactions();
+        }
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        function copyRef() { navigator.clipboard.writeText(state.currentUser.username.toUpperCase()); showToast('Copied!'); }
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader').style.opacity = '0';
+                setTimeout(() => document.getElementById('loader').style.display = 'none', 500);
+            }, 1000);
+            updateIcons();
+        });
+    </script>
+</body>
+</html>
